@@ -1,4 +1,6 @@
 import streamlit as st
+from datetime import date
+from pawpal_system import Owner, Pet, Scheduler  # NEW: import logic layer
 
 st.set_page_config(page_title="PawPal+", page_icon="🐾", layout="centered")
 
@@ -46,6 +48,13 @@ species = st.selectbox("Species", ["dog", "cat", "other"])
 st.markdown("### Tasks")
 st.caption("Add a few tasks. In your final version, these should feed into your scheduler.")
 
+# NEW: initialize Owner and Scheduler in session_state once
+if "owner" not in st.session_state:
+    st.session_state.owner = Owner(owner_name)
+    st.session_state.owner.add_pet(Pet(pet_name, species))
+    st.session_state.scheduler = Scheduler(st.session_state.owner)
+
+# KEPT: tasks list still used to drive the UI table below
 if "tasks" not in st.session_state:
     st.session_state.tasks = []
 
@@ -58,6 +67,13 @@ with col3:
     priority = st.selectbox("Priority", ["low", "medium", "high"], index=2)
 
 if st.button("Add task"):
+    # NEW: wire to Scheduler instead of just appending a dict
+    st.session_state.scheduler.schedule_task(
+        pet_name=pet_name,
+        description=task_title,
+        due_date=date.today(),
+    )
+    # KEPT: also update the display list so the table still works
     st.session_state.tasks.append(
         {"title": task_title, "duration_minutes": int(duration), "priority": priority}
     )
@@ -74,15 +90,11 @@ st.subheader("Build Schedule")
 st.caption("This button should call your scheduling logic once you implement it.")
 
 if st.button("Generate schedule"):
-    st.warning(
-        "Not implemented yet. Next step: create your scheduling logic (classes/functions) and call it here."
-    )
-    st.markdown(
-        """
-Suggested approach:
-1. Design your UML (draft).
-2. Create class stubs (no logic).
-3. Implement scheduling behavior.
-4. Connect your scheduler here and display results.
-"""
-    )
+    # NEW: replaced the warning with a real call to scheduler.all_pending()
+    pending = st.session_state.scheduler.all_pending()
+    if pending:
+        st.success("Schedule generated from your Scheduler class!")
+        for task in pending:
+            st.write(f"- {task}")
+    else:
+        st.info("No pending tasks to schedule.")
