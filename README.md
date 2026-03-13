@@ -41,3 +41,10 @@ pip install -r requirements.txt
 5. Add tests to verify key behaviors.
 6. Connect your logic to the Streamlit UI in `app.py`.
 7. Refine UML so it matches what you actually built.
+
+# Testing PawPal+
+Run the tests with: python -m pytest
+
+The suite covers three categories. Core behavior tests confirm that mark_complete() flips the right flag, summary() reflects the correct status, and get_all_tasks() flattens tasks across pets. Scheduling logic tests verify that schedule_tasks() orders by priority, respects the time budget, and handles zero-minute budgets. Edge case tests check that operations on empty pets, empty task lists, and already-completed tasks never crash and return sensible empty results.
+
+Confidence level: (4/5) — all core behaviors and the most likely edge cases are covered. The main gap is integration-level testing (UI + backend together) and duration-overlap conflict detection, which the scheduler does not yet implement.
