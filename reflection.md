@@ -89,6 +89,9 @@ I tested the main behaviors of the system, such as adding pets to an owner, addi
 - How confident are you that your scheduler works correctly?
 - What edge cases would you test next if you had more time?
 
+Confidence is fairly high for the basics which are priority ordering, time limits, and skipping completed tasks all have passing tests. The weak spot is conflict detection, which only catches tasks at the exact same time and misses overlaps where one task runs into another's start time.
+
+If there were more time, the most useful cases to test next would be overlapping task durations, a pet with a large number of tasks where the greedy approach leaves obvious gaps, and bad inputs like negative durations or empty titles that currently pass through unchecked.
 ---
 
 ## 5. Reflection
@@ -97,10 +100,16 @@ I tested the main behaviors of the system, such as adding pets to an owner, addi
 
 - What part of this project are you most satisfied with?
 
+The part I'm most satisfied with is the session state integration in app.py. It's a small fix, just a one-line if guard, but it solves a real bug that would have made the entire app useless. Understanding why Streamlit reruns the whole script on every click, and then knowing exactly where to intercept that to preserve data, felt like a genuine insight rather than just following instructions.
+
 **b. What you would improve**
 
 - If you had another iteration, what would you improve or redesign?
 
+The first thing to improve would be conflict detection, since right now it only catches tasks at the exact same time and misses overlaps entirely. Adding duration-aware checking would make the scheduler much more useful in practice. The second thing would be the owner setup in the UI, where changing the name input after the first load has no effect because the object is already created. A proper submit form would fix that and make the flow less confusing.
+
 **c. Key takeaway**
 
 - What is one important thing you learned about designing systems or working with AI on this project?
+
+An important thing I learned is that AI is a great collaborative tool, but it cannot be relied on entirely. Students still need to know their code.
